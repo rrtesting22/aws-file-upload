@@ -1,9 +1,8 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { upload } from "./handlers";
-jest.mock("@aws-sdk/client-s3");
-
 import FormData from "form-data";
 import fs from "fs";
+jest.mock("@aws-sdk/client-s3");
 
 describe("upload", () => {
   const file = fs.readFileSync("./example.jpeg");
@@ -18,8 +17,7 @@ describe("upload", () => {
   };
 
   afterAll(() => {
-    (S3Client as jest.Mock).mockClear();
-    (PutObjectCommand as unknown as jest.Mock).mockClear();
+    jest.clearAllMocks();
   });
 
   it("returns an id and upload a file to s3", async () => {
@@ -30,9 +28,8 @@ describe("upload", () => {
       };
     });
 
-    const mockPutObjectCommand = jest.fn();
-    (PutObjectCommand as unknown as jest.Mock).mockImplementation(
-      () => mockPutObjectCommand
+    (PutObjectCommand as unknown as jest.Mock).mockImplementation(() =>
+      jest.fn()
     );
 
     const response = await upload(event);
